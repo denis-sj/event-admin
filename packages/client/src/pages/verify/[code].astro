@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import VerifyDiploma from '../../components/verify/VerifyDiploma';
+
+const { code } = Astro.params;
+---
+
+<Layout title="Ideathon — Проверка диплома">
+  <VerifyDiploma client:only="react" code={code} />
+</Layout>

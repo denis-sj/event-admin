@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.cache/
+
+# Astro
+.astro/
+
+# Database
+*.db
+*.db-journal
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Uploads
+uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Prisma
+packages/server/prisma/migrations/**/migration_lock.toml

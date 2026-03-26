@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JuryApp from '../../components/jury/JuryApp';
+
+const { token } = Astro.params;
+---
+
+<Layout title="Ideathon — Оценка">
+  <JuryApp client:only="react" token={token} />
+</Layout>

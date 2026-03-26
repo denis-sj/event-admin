@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+export const prerender = true;
+---
+
+<Layout title="Ideathon Platform">
+  <div class="flex min-h-screen flex-col">
+    <header class="border-b border-gray-200 bg-white">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <h1 class="text-xl font-bold text-primary-700">Ideathon Platform</h1>
+        <a
+          href="/admin"
+          class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+        >
+          Войти как организатор
+        </a>
+      </div>
+    </header>
+
+    <main class="flex flex-1 items-center justify-center px-4">
+      <div class="max-w-2xl text-center">
+        <h2 class="mb-4 text-4xl font-bold tracking-tight text-gray-900">
+          Платформа для проведения идеатонов
+        </h2>
+        <p class="mb-8 text-lg text-gray-600">
+          Управляйте мероприятиями, назначайте задания командам, оценивайте проекты
+          со смартфона и автоматически формируйте дипломы для участников.
+        </p>
+        <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <a
+            href="/admin"
+            class="rounded-lg bg-primary-600 px-6 py-3 text-base font-medium text-white hover:bg-primary-700 transition-colors"
+          >
+            Панель организатора
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-t border-gray-200 bg-white py-6 text-center text-sm text-gray-500">
+      Ideathon Platform &copy; {new Date().getFullYear()}
+    </footer>
+  </div>
+</Layout>

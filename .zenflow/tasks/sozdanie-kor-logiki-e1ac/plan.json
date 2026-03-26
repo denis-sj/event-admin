@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "steps": [
+    {
+      "id": "01f5489f-4232-4eae-bd04-af1b5066b3d4",
+      "name": "Requirements",
+      "description": "Создание PRD (Product Requirements Document) на основе описания задачи. Анализ требований, уточнение неясных моментов, документирование.",
+      "status": "Completed",
+      "sort_order": 0,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T06:02:53.026290700Z",
+      "updated_at": "2026-03-24T06:05:42.983262600Z"
+    },
+    {
+      "id": "3000331c-691c-41ca-96d8-b1d323256a3b",
+      "name": "Technical Specification",
+      "description": "Создание технической спецификации на основе PRD.",
+      "status": "Completed",
+      "sort_order": 1,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T06:02:53.026290700Z",
+      "updated_at": "2026-03-24T06:38:55.732475400Z"
+    },
+    {
+      "id": "1b677707-0a0a-4e7b-9cbb-76b6bcb98fda",
+      "name": "Planning",
+      "description": "Детальный план реализации на основе спецификации.",
+      "status": "Completed",
+      "sort_order": 2,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T06:02:53.026290700Z",
+      "updated_at": "2026-03-24T07:16:56.413485600Z"
+    },
+    {
+      "id": "8652d4dd-b67b-4448-8f3c-ef1f5d02236b",
+      "name": "Project initialization and monorepo setup",
+      "description": "Инициализация проекта: монорепозиторий с npm workspaces (packages/shared, packages/server, packages/client), корневые конфигурации (tsconfig, eslint, prettier, gitignore, env.example), установка dev-зависимостей, npm-скрипты. Верификация: npm run lint проходит.",
+      "status": "Completed",
+      "sort_order": 3,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T07:28:28.298711200Z"
+    },
+    {
+      "id": "af7eea71-dbc8-489b-8c0b-9b169ee7d6c3",
+      "name": "Shared package — types, schemas, constants",
+      "description": "Пакет packages/shared: TypeScript-типы (Event, Team, Task, Criterion, JuryMember, TeamEvaluation, Score, Diploma, ApiResponse), Zod-схемы валидации, константы и enum-значения. Unit-тесты для Zod-схем.",
+      "status": "Completed",
+      "sort_order": 4,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T08:13:31.883220200Z"
+    },
+    {
+      "id": "a6cca3a2-09d1-4166-8589-a52528c945d2",
+      "name": "Database schema and Prisma setup",
+      "description": "Prisma-схема с полной моделью данных (Organizer, Event, Criterion, Team, Participant, Task, JuryMember, TeamEvaluation, Score, Diploma, DiplomaSettings), миграция SQLite, Prisma client singleton, seed-скрипт с тестовыми данными.",
+      "status": "Completed",
+      "sort_order": 5,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T10:44:49.292060500Z"
+    },
+    {
+      "id": "7157d013-bfd2-49ab-98bd-5985e13ab24d",
+      "name": "Backend infrastructure — Express, middleware, auth, WebSocket",
+      "description": "Express-приложение с middleware (JWT auth для организатора, token auth для жюри, Zod validation, error handler, rate limiting), WebSocket-сервер (auth, broadcaster, ping/pong), auth service (register/login с bcrypt+JWT), auth routes. Тесты middleware и auth.",
+      "status": "Completed",
+      "sort_order": 6,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T12:15:42.825774800Z"
+    },
+    {
+      "id": "4deb375a-976c-4c7f-a1b8-9b6a5abe41f5",
+      "name": "Backend CRUD — events, criteria, tasks",
+      "description": "CRUD-эндпоинты организатора: мероприятия (с переходами статусов DRAFT→ACTIVE→SCORING_CLOSED→COMPLETED, загрузка логотипа), критерии оценки (CRUD + порядок + блокировка после ACTIVE), задания (CRUD + назначение командам с uniqueTaskAssignment). Тесты.",
+      "status": "Completed",
+      "sort_order": 7,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T13:08:00.243237300Z"
+    },
+    {
+      "id": "29d26cc5-43f9-4ae4-9207-96eff46fc067",
+      "name": "Backend — teams, participants, import",
+      "description": "Команды и участники (CRUD), импорт из CSV/XLSX: preview (парсинг, автоматический маппинг), apply (создание/обновление команд по маппингу), повторный импорт с сохранением оценок и разрешением конфликтов. Тесты.",
+      "status": "Completed",
+      "sort_order": 8,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-24T13:40:18.839039900Z"
+    },
+    {
+      "id": "82f57e21-f88b-44fd-89cb-a2e32036d0c4",
+      "name": "Backend — jury management, presentation control, scoring",
+      "description": "Управление жюри (добавление, генерация токенов, QR-коды, мониторинг активности). Презентация: порядок выступлений, текущая команда, таймер (in-memory, WS broadcasting), открытие/закрытие приёма оценок. API оценки для жюри: save draft, confirm, валидация. WS-события. Тесты.",
+      "status": "Completed",
+      "sort_order": 9,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-25T11:43:24.587254100Z"
+    },
+    {
+      "id": "afc4cf19-8eb0-4fb8-bd88-04fc6643f93e",
+      "name": "Backend — results, diplomas, public verification",
+      "description": "Результаты: сводная таблица (команды×критерии×жюри), средние баллы, рейтинг, фильтрация по заданию, аномалии (>2σ), экспорт XLSX/CSV. Дипломы: настройки, PDF-генерация (PDFKit), QR-код верификации (nanoid), массовая генерация, ZIP-архив. Публичная верификация. Тесты.",
+      "status": "Completed",
+      "sort_order": 10,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-26T08:14:13.460966600Z"
+    },
+    {
+      "id": "7fd513c1-471f-4d13-9c9c-0f56602d75f8",
+      "name": "Frontend infrastructure — Astro, React, stores, API client",
+      "description": "Astro hybrid mode + React islands, Tailwind CSS, Astro-страницы (index, admin catch-all, jury/[token], verify/[code]), HTTP-клиент (ky), WebSocket-клиент с reconnect, Zustand stores (auth, ws), базовые UI-компоненты (Button, Input, Modal, Card).",
+      "status": "Completed",
+      "sort_order": 11,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-25T14:14:14.262619700Z"
+    },
+    {
+      "id": "c21fc488-189a-483c-b3e1-372dcd92d5ee",
+      "name": "Frontend — admin panel (organizer)",
+      "description": "Полное SPA организатора: AdminApp с React Router, логин/регистрация, EventList, EventForm, EventDashboard, CriteriaManager (drag-and-drop), TaskManager, TeamManager, ImportWizard (CSV/XLSX + маппинг), JuryManager (QR + мониторинг), PresentationControl (таймер), ResultsTable (аномалии), DiplomaSettings.",
+      "status": "Completed",
+      "sort_order": 12,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-25T14:41:06.260087300Z"
+    },
+    {
+      "id": "c60e42fb-a931-4b0a-8853-fd97a2652624",
+      "name": "Frontend — jury panel (mobile-first, offline)",
+      "description": "Mobile-first SPA жюри: jury.store с persist (localStorage) и offline-очередь, JuryApp (токен-авторизация + WS), TeamCard (текущая команда из WS), Timer (WS timer:state), ScoreForm (автосохранение + подтверждение), TeamList (статусы), ConnectionStatus (Online/Syncing/Offline), offline-синхронизация.",
+      "status": "Completed",
+      "sort_order": 13,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-26T07:00:37.862181400Z"
+    },
+    {
+      "id": "623de191-4c52-4bdc-bee2-4e39ee22dd55",
+      "name": "Frontend — diploma verification page",
+      "description": "Публичная страница верификации дипломов: VerifyDiploma.tsx — загрузка данных по коду, отображение информации о мероприятии, команде, месте.",
+      "status": "Completed",
+      "sort_order": 14,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-26T07:32:45.283527Z"
+    },
+    {
+      "id": "b4f403f1-37f3-4578-8676-d1a814ed70d3",
+      "name": "Integration testing and final verification",
+      "description": "Полный end-to-end сценарий: создание мероприятия → импорт → настройка → жюри → оценка → результаты → дипломы → верификация. Проверка WebSocket, offline-сценария. npm run lint, npm run test, npm run build — всё проходит без ошибок.",
+      "status": "Completed",
+      "sort_order": 15,
+      "start_new_chat": false,
+      "stop_after_completion": false,
+      "created_at": "2026-03-24T07:16:47.486281900Z",
+      "updated_at": "2026-03-26T08:14:13.386125500Z"
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+// Prisma schema for Ideathon Platform
+// Database: SQLite (dev), PostgreSQL (production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Organizer {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  events Event[]
+}
+
+model Event {
+  id                   String      @id @default(uuid())
+  organizerId          String
+  title                String
+  description          String?
+  date                 DateTime
+  logoPath             String?
+  status               String      @default("DRAFT") // DRAFT | ACTIVE | SCORING_CLOSED | COMPLETED
+  timerDuration        Int         @default(300) // seconds
+  uniqueTaskAssignment Boolean     @default(false)
+  currentTeamId        String?
+  scoringTeamId        String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  organizer       Organizer        @relation(fields: [organizerId], references: [id])
+  currentTeam     Team?            @relation("EventCurrentTeam", fields: [currentTeamId], references: [id], onDelete: SetNull)
+  scoringTeam     Team?            @relation("EventScoringTeam", fields: [scoringTeamId], references: [id], onDelete: SetNull)
+  criteria        Criterion[]
+  teams           Team[]           @relation("EventTeams")
+  tasks           Task[]
+  juryMembers     JuryMember[]
+  diplomaSettings DiplomaSettings?
+
+  @@index([organizerId])
+}
+
+model Criterion {
+  id          String  @id @default(uuid())
+  eventId     String
+  name        String
+  description String?
+  maxScore    Int
+  sortOrder   Int     @default(0)
+
+  event  Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  scores Score[]
+
+  @@index([eventId])
+}
+
+model Team {
+  id                 String  @id @default(uuid())
+  eventId            String
+  name               String
+  projectDescription String?
+  taskId             String?
+  presentationOrder  Int?
+
+  event        Event            @relation("EventTeams", fields: [eventId], references: [id], onDelete: Cascade)
+  task         Task?            @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  participants Participant[]
+  evaluations  TeamEvaluation[]
+  diploma      Diploma?
+
+  currentInEvents Event[] @relation("EventCurrentTeam")
+  scoringInEvents Event[] @relation("EventScoringTeam")
+
+  @@unique([eventId, name])
+  @@index([eventId])
+  @@index([taskId])
+}
+
+model Participant {
+  id     String  @id @default(uuid())
+  teamId String
+  name   String
+  email  String?
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+}
+
+model Task {
+  id          String @id @default(uuid())
+  eventId     String
+  title       String
+  description String?
+  difficulty  String @default("MEDIUM") // LOW | MEDIUM | HIGH
+
+  event Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  teams Team[]
+
+  @@index([eventId])
+}
+
+model JuryMember {
+  id         String    @id @default(uuid())
+  eventId    String
+  name       String
+  email      String?
+  token      String    @unique
+  firstLogin DateTime?
+  lastActive DateTime?
+
+  event       Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  evaluations TeamEvaluation[]
+
+  @@index([eventId])
+  @@index([token])
+}
+
+model TeamEvaluation {
+  id           String   @id @default(uuid())
+  juryMemberId String
+  teamId       String
+  status       String   @default("DRAFT") // DRAFT | CONFIRMED
+  comment      String?
+  updatedAt    DateTime @updatedAt
+
+  juryMember JuryMember @relation(fields: [juryMemberId], references: [id], onDelete: Cascade)
+  team       Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  scores     Score[]
+
+  @@unique([juryMemberId, teamId])
+  @@index([teamId])
+  @@index([juryMemberId])
+}
+
+model Score {
+  id           String @id @default(uuid())
+  evaluationId String
+  criterionId  String
+  value        Int
+
+  evaluation TeamEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  criterion  Criterion      @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+
+  @@unique([evaluationId, criterionId])
+  @@index([evaluationId])
+}
+
+model Diploma {
+  id               String   @id @default(uuid())
+  teamId           String   @unique
+  verificationCode String   @unique
+  filePath         String?
+  rank             Int
+  totalScore       Float
+  generatedAt      DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model DiplomaSettings {
+  id             String  @id @default(uuid())
+  eventId        String  @unique
+  backgroundPath String?
+  primaryColor   String  @default("#1a365d")
+  textColor      String  @default("#1a202c")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}

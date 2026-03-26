@@ -3,9 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiGet, apiPatch, ApiError } from '../../lib/api';
 import { Button, Card, Badge, Spinner } from '../ui';
-import type { Event, EventStatus } from '@ideathon/shared';
+import type { Event, EventStatus, Participant } from '@ideathon/shared';
 
 type EventFull = Event & {
+  teams: Array<{ participants: Participant[] }>;
   _count: { teams: number; criteria: number; tasks: number; juryMembers: number };
 };
 
@@ -30,14 +31,14 @@ const nextStatusAction: Partial<Record<EventStatus, { status: EventStatus; label
 };
 
 const sections = [
-  { path: 'criteria', label: 'Критерии оценки', icon: '☰' },
-  { path: 'tasks', label: 'Задания', icon: '☐' },
-  { path: 'teams', label: 'Команды', icon: '♟' },
-  { path: 'import', label: 'Импорт', icon: '⬆' },
-  { path: 'jury', label: 'Жюри', icon: '⚖' },
-  { path: 'presentation', label: 'Презентация', icon: '▶' },
-  { path: 'results', label: 'Результаты', icon: '📊' },
-  { path: 'diplomas', label: 'Дипломы', icon: '🎓' },
+  { path: 'criteria', label: 'Критерии оценки', icon: '☰', countKey: 'criteria' as const },
+  { path: 'tasks', label: 'Задания', icon: '☐', countKey: 'tasks' as const },
+  { path: 'teams', label: 'Команды', icon: '♟', countKey: 'teams' as const },
+  { path: 'import', label: 'Импорт', icon: '⬆', countKey: null },
+  { path: 'jury', label: 'Жюри', icon: '⚖', countKey: 'juryMembers' as const },
+  { path: 'presentation', label: 'Презентация', icon: '▶', countKey: null },
+  { path: 'results', label: 'Результаты', icon: '📊', countKey: null },
+  { path: 'diplomas', label: 'Дипломы', icon: '🎓', countKey: null },
 ];
 
 export function EventDashboard() {
@@ -47,12 +48,11 @@ export function EventDashboard() {
   const [loading, setLoading] = useState(true);
   const [statusLoading, setStatusLoading] = useState(false);
 
-  const fetchEvent = () => {
+  const fetchEvent = () =>
     apiGet<EventFull>(`organizer/events/${eventId}`)
       .then(setEvent)
       .catch(() => toast.error('Не удалось загрузить мероприятие'))
       .finally(() => setLoading(false));
-  };
 
   useEffect(() => {
     fetchEvent();
@@ -61,11 +61,11 @@ export function EventDashboard() {
   const handleStatusChange = async (newStatus: EventStatus) => {
     setStatusLoading(true);
     try {
-      const updated = await apiPatch<EventFull>(`organizer/events/${eventId}/status`, {
+      await apiPatch(`organizer/events/${eventId}/status`, {
         status: newStatus,
       });
-      setEvent(updated);
       toast.success(`Статус изменён: ${statusLabels[newStatus]}`);
+      await fetchEvent();
     } catch (e) {
       const msg = e instanceof ApiError ? e.message : 'Ошибка смены статуса';
       toast.error(msg);
@@ -82,6 +82,7 @@ export function EventDashboard() {
     );
   }
 
+  const participantCount = event.teams.reduce((sum, t) => sum + t.participants.length, 0);
   const action = nextStatusAction[event.status];
 
   return (
@@ -145,6 +146,7 @@ export function EventDashboard() {
 
         <div className="mt-4 flex gap-6 border-t border-gray-100 pt-4 text-sm text-gray-500">
           <span>Команд: {event._count.teams}</span>
+          <span>Участников: {participantCount}</span>
           <span>Жюри: {event._count.juryMembers}</span>
           <span>Критериев: {event._count.criteria}</span>
           <span>Заданий: {event._count.tasks}</span>
@@ -152,14 +154,26 @@ export function EventDashboard() {
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {sections.map((s) => (
-          <Link key={s.path} to={`/events/${eventId}/${s.path}`}>
-            <Card className="hover:shadow-md transition-shadow cursor-pointer text-center py-8">
-              <div className="text-2xl mb-2">{s.icon}</div>
-              <div className="font-medium text-gray-900">{s.label}</div>
-            </Card>
-          </Link>
-        ))}
+        {sections.map((s) => {
+          const count = s.countKey ? event._count[s.countKey] : null;
+          const suffix =
+            s.path === 'teams' && count != null
+              ? ` (${count} / ${participantCount} уч.)`
+              : count != null
+                ? ` (${count})`
+                : '';
+          return (
+            <Link key={s.path} to={`/events/${eventId}/${s.path}`}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer text-center py-8">
+                <div className="text-2xl mb-2">{s.icon}</div>
+                <div className="font-medium text-gray-900">
+                  {s.label}
+                  {suffix && <span className="text-gray-400 font-normal">{suffix}</span>}
+                </div>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

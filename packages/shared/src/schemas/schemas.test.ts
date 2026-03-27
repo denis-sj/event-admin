@@ -415,6 +415,55 @@ describe("scoreInputSchema", () => {
     expect(result.value).toBe(7.1);
   });
 
+  it("accepts 0.3 (floating-point regression)", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 0.3,
+    });
+    expect(result.value).toBe(0.3);
+  });
+
+  it("accepts 5.3 (floating-point regression)", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 5.3,
+    });
+    expect(result.value).toBe(5.3);
+  });
+
+  it("accepts 7.7 (floating-point regression)", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 7.7,
+    });
+    expect(result.value).toBe(7.7);
+  });
+
+  it("accepts 9.3 (floating-point regression)", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 9.3,
+    });
+    expect(result.value).toBe(9.3);
+  });
+
+  it("accepts integer 10", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 10,
+    });
+    expect(result.value).toBe(10);
+  });
+
+  it("rejects precision beyond 0.1 step (2.05)", () => {
+    expect(() =>
+      scoreInputSchema.parse({
+        criterionId: "550e8400-e29b-41d4-a716-446655440000",
+        value: 2.05,
+      })
+    ).toThrow();
+  });
+
   it("rejects precision beyond 0.1 step (3.55)", () => {
     expect(() =>
       scoreInputSchema.parse({

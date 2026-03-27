@@ -399,11 +399,36 @@ describe("scoreInputSchema", () => {
     ).toThrow();
   });
 
-  it("rejects non-integer score", () => {
+  it("accepts fractional score with 0.1 step", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 3.5,
+    });
+    expect(result.value).toBe(3.5);
+  });
+
+  it("accepts score 7.1", () => {
+    const result = scoreInputSchema.parse({
+      criterionId: "550e8400-e29b-41d4-a716-446655440000",
+      value: 7.1,
+    });
+    expect(result.value).toBe(7.1);
+  });
+
+  it("rejects precision beyond 0.1 step (3.55)", () => {
     expect(() =>
       scoreInputSchema.parse({
         criterionId: "550e8400-e29b-41d4-a716-446655440000",
-        value: 3.5,
+        value: 3.55,
+      })
+    ).toThrow();
+  });
+
+  it("rejects precision beyond 0.1 step (3.14159)", () => {
+    expect(() =>
+      scoreInputSchema.parse({
+        criterionId: "550e8400-e29b-41d4-a716-446655440000",
+        value: 3.14159,
       })
     ).toThrow();
   });

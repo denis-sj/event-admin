@@ -16,3 +16,100 @@
   --color-warning-500: oklch(0.75 0.15 75);
   --color-danger-500: oklch(0.60 0.20 25);
 }
+
+/* Score slider styles */
+.score-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--color-primary-200), var(--color-primary-200));
+  outline: none;
+  cursor: pointer;
+}
+
+.score-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.score-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary-500);
+  border: 3px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.score-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.score-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+  background: var(--color-primary-600);
+}
+
+.score-slider:disabled::-webkit-slider-thumb {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.score-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary-500);
+  border: 3px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.score-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.score-slider::-moz-range-thumb:active {
+  transform: scale(1.2);
+  background: var(--color-primary-600);
+}
+
+.score-slider:disabled::-moz-range-thumb {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.score-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-primary-200);
+}
+
+/* Unset state — score not yet chosen by jury */
+.score-slider--unset {
+  background: #e5e7eb;
+}
+
+.score-slider--unset::-webkit-slider-thumb {
+  background: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.score-slider--unset::-moz-range-thumb {
+  background: #9ca3af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.score-slider--unset::-moz-range-track {
+  background: #e5e7eb;
+}

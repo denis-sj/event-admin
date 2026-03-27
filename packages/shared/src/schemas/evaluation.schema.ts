@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const scoreInputSchema = z.object({
   criterionId: z.string().uuid(),
-  value: z.number().int().min(0),
+  value: z.number().min(0).multipleOf(0.1),
 });
 
 export const saveScoresSchema = z.object({

@@ -144,7 +144,7 @@ model Score {
   id           String @id @default(uuid())
   evaluationId String
   criterionId  String
-  value        Int
+  value        Float
 
   evaluation TeamEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
   criterion  Criterion      @relation(fields: [criterionId], references: [id], onDelete: Cascade)

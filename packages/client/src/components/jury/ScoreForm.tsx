@@ -45,11 +45,13 @@ export function ScoreForm({
   // supports re-saving a confirmed evaluation (returns it to DRAFT).
   const isReadOnly = !isScoringOpen;
 
-  // Compute total
-  const total = Object.values(scores).reduce<number>(
-    (sum, val) => sum + (typeof val === 'number' ? val : 0),
-    0,
-  );
+  // Compute total (round to 1 decimal to avoid floating-point artifacts)
+  const total = Math.round(
+    Object.values(scores).reduce<number>(
+      (sum, val) => sum + (typeof val === 'number' ? val : 0),
+      0,
+    ) * 10,
+  ) / 10;
 
   const maxTotal = criteria.reduce((sum, c) => sum + c.maxScore, 0);
 
@@ -118,6 +120,24 @@ export function ScoreForm({
     }
   }, [team.evaluation?.id, team.evaluation?.status]);
 
+  // Commit the current slider position when the user first interacts with an unset criterion.
+  // This handles the case where the thumb is already at 0 and onChange won't fire.
+  // Only triggers on deliberate interaction: pointer down or slider-relevant key presses.
+  // Passive focus (Tab navigation) does NOT commit a score.
+  const SLIDER_COMMIT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']);
+
+  const handleSliderInteract = (criterionId: string, currentValue: string) => {
+    if (isReadOnly) return;
+    if (scores[criterionId] !== '') return; // already set
+    handleScoreChange(criterionId, currentValue);
+  };
+
+  const handleSliderKeyDown = (criterionId: string, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (SLIDER_COMMIT_KEYS.has(e.key)) {
+      handleSliderInteract(criterionId, e.currentTarget.value);
+    }
+  };
+
   const handleScoreChange = (criterionId: string, value: string) => {
     if (isReadOnly) return;
 
@@ -126,14 +146,16 @@ export function ScoreForm({
       return;
     }
 
-    const num = parseInt(value, 10);
+    const num = parseFloat(value);
     if (isNaN(num)) return;
 
     const criterion = criteria.find((c) => c.id === criterionId);
     if (!criterion) return;
 
     const clamped = Math.min(Math.max(0, num), criterion.maxScore);
-    setScores((prev) => ({ ...prev, [criterionId]: clamped }));
+    // Round to 1 decimal place to avoid floating-point artifacts
+    const rounded = Math.round(clamped * 10) / 10;
+    setScores((prev) => ({ ...prev, [criterionId]: rounded }));
   };
 
   const handleSaveNow = async () => {
@@ -208,7 +230,7 @@ export function ScoreForm({
             key={criterion.id}
             className="rounded-lg border border-gray-200 bg-white px-4 py-3"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900">
                   {criterion.name}
@@ -220,22 +242,36 @@ export function ScoreForm({
                 )}
               </div>
               <div className="flex flex-shrink-0 items-center gap-1.5">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  max={criterion.maxScore}
-                  value={scores[criterion.id] === '' ? '' : scores[criterion.id]}
-                  onChange={(e) =>
-                    handleScoreChange(criterion.id, e.target.value)
-                  }
-                  disabled={isReadOnly}
-                  className="h-12 w-16 rounded-lg border border-gray-300 text-center text-lg font-semibold text-gray-900 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:bg-gray-100 disabled:text-gray-500"
-                  placeholder="0"
-                />
+                <span className="min-w-[3.5rem] text-right text-lg font-semibold text-gray-900">
+                  {scores[criterion.id] === '' ? '—' : (scores[criterion.id] as number).toFixed(1)}
+                </span>
                 <span className="text-sm text-gray-400">
                   / {criterion.maxScore}
                 </span>
+              </div>
+            </div>
+            <div className="mt-2">
+              <input
+                type="range"
+                min={0}
+                max={criterion.maxScore}
+                step={0.1}
+                value={scores[criterion.id] === '' ? 0 : scores[criterion.id]}
+                onChange={(e) =>
+                  handleScoreChange(criterion.id, e.target.value)
+                }
+                onPointerDown={(e) =>
+                  handleSliderInteract(criterion.id, (e.target as HTMLInputElement).value)
+                }
+                onKeyDown={(e) =>
+                  handleSliderKeyDown(criterion.id, e)
+                }
+                disabled={isReadOnly}
+                className={`score-slider w-full${scores[criterion.id] === '' ? ' score-slider--unset' : ''}`}
+              />
+              <div className="mt-0.5 flex justify-between text-xs text-gray-400">
+                <span>0</span>
+                <span>{criterion.maxScore}</span>
               </div>
             </div>
           </div>
@@ -247,7 +283,7 @@ export function ScoreForm({
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-300">Total</span>
           <span className="text-2xl font-bold text-white">
-            {total}{' '}
+            {total.toFixed(1)}{' '}
             <span className="text-base font-normal text-gray-400">
               / {maxTotal}
             </span>

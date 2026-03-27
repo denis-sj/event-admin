@@ -188,7 +188,7 @@ export function ResultsTable() {
                                 }`}
                                 title={js.comment || undefined}
                               >
-                                {js.value}
+                                {Number.isInteger(js.value) ? js.value : js.value.toFixed(1)}
                                 {js.isAnomaly && (
                                   <span className="ml-1 text-xs text-red-500" title="Аномальная оценка">
                                     !

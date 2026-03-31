@@ -12,6 +12,7 @@ build/
 # Database
 *.db
 *.db-journal
+!packages/server/dev.db
 
 # Environment
 .env

@@ -1,8 +1,14 @@
+import path from 'node:path';
 import { z } from 'zod';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load env from the package first, then fall back to the repo root.
+dotenv.config({
+  path: [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(process.cwd(), '..', '..', '.env'),
+  ],
+});
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url().or(z.string().startsWith('file:')),

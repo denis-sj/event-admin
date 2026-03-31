@@ -29,6 +29,3 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 nul
-
-# Prisma
-packages/server/prisma/migrations/**/migration_lock.toml

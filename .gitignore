@@ -9,13 +9,6 @@ build/
 # Astro
 .astro/
 
-# Database
-*.db
-*.db-journal
-!packages/server/dev.db
-
-# Environment
-.env
 .env.local
 .env.production
 
